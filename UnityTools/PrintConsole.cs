@@ -5,7 +5,7 @@
  using System.Collections.Generic;
  using System;
 
-namespace Paps
+namespace Paps.Unity
 {
     public class PrintConsole : MonoBehaviour
     {
