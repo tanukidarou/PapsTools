@@ -1,67 +1,126 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System;
 
 namespace Paps.Coroutines
 {
-    public class Coroutine : IYieldInstruction
+    public class Coroutine : ICoroutine
     {
-        public IEnumerator Iterator { get; protected set; }
-        public bool paused;
+        public IEnumerator Iterator { get; set; }
 
-        public Coroutine(IEnumerator iterator)
-        {
-            Override(iterator);
-        }
+        public virtual object Current { get; protected set; }
 
-        public bool KeepWaiting
+        protected Func<IEnumerator> iteratorFactoryMethod;
+
+        public IEnumerator Nested
         {
             get
             {
-                if(paused)
+                if(Current is IEnumerator iterator)
                 {
-                    return true;
+                    return iterator;
                 }
-                else
-                {
-                    return RecursiveMoveNext(Iterator);
-                }
+
+                return null;
             }
         }
-        
-        protected virtual bool RecursiveMoveNext(IEnumerator recursiveIterator)
+
+        public Coroutine(IEnumerator iterator = null, Func<IEnumerator> iteratorFactoryMethod = null)
         {
-            if (recursiveIterator.Current is IYieldInstruction yieldInst)
-            {
-                if (yieldInst.KeepWaiting)
-                {
-                    return true;
-                }
-            }
-            else if (recursiveIterator.Current is IEnumerator enumerator)
-            {
-                if (RecursiveMoveNext(enumerator))
-                {
-                    return true;
-                }
-            }
+            Iterator = iterator;
+            this.iteratorFactoryMethod = iteratorFactoryMethod;
+        }
 
-            bool moveNext = recursiveIterator.MoveNext();
+        public void SetIteratorFactoryMethod(Func<IEnumerator> method)
+        {
+            iteratorFactoryMethod = method;
+        }
 
-            if(moveNext)
+        protected bool NestedMoveNext()
+        {
+            if(Nested != null)
             {
-                if (recursiveIterator.Current is IYieldInstruction || recursiveIterator.Current is IEnumerator)
-                {
-                    return RecursiveMoveNext(recursiveIterator);
-                }
-
-                return true;
+                return Nested.MoveNext();
             }
 
             return false;
         }
 
-        public void Override(IEnumerator _iterator)
+        public virtual bool MoveNext()
         {
-            Iterator = _iterator;
+            if(NestedMoveNext())
+            {
+                return true;
+            }
+
+            bool moveNext = Iterator.MoveNext();
+
+            Current = Iterator.Current;
+
+            return moveNext;
+        }
+
+        public virtual void Reset()
+        {
+            Iterator = iteratorFactoryMethod();
+        }
+    }
+
+    public class Coroutine<T> : Coroutine, ICoroutine<T>, IDisposable
+    {
+        private IEnumerator<T> internalIterator;
+
+        public new IEnumerator<T> Iterator
+        {
+            get
+            {
+                return internalIterator;
+            }
+
+            set
+            {
+                internalIterator = value;
+                base.Iterator = value;
+            }
+        }
+
+        public T YieldResult { get; protected set; }
+
+        protected new Func<IEnumerator<T>> iteratorFactoryMethod;
+
+        public Coroutine(IEnumerator<T> iterator = null, Func<IEnumerator<T>> iteratorFactoryMethod = null)
+        {
+            Iterator = iterator;
+            this.iteratorFactoryMethod = iteratorFactoryMethod;
+        }
+
+        private new void SetIteratorFactoryMethod(Func<IEnumerator> method)
+        {
+            base.SetIteratorFactoryMethod(method);
+        }
+
+        public void SetIteratorFactoryMethod(Func<IEnumerator<T>> method)
+        {
+            iteratorFactoryMethod = method;
+        }
+
+        public override bool MoveNext()
+        {
+            if(NestedMoveNext())
+            {
+                return true;
+            }
+
+            bool moveNext = Iterator.MoveNext();
+
+            YieldResult = Iterator.Current;
+
+            return moveNext;
+        }
+
+        public void Dispose()
+        {
+            Iterator.Dispose();
         }
     }
 }
