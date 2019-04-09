@@ -3,15 +3,6 @@ using System.Collections.Generic;
 
 namespace Paps.StateMachines
 {
-    public interface IFSMTransition<TState, TTrigger>
-    {
-        TState stateFrom { get; }
-        TTrigger trigger { get; }
-        TState stateTo { get; }
-        
-        bool IsValidTransition();
-    }
-
     public class FSMTransition<TState, TTrigger> : IFSMTransition<TState, TTrigger>, IEquatable<FSMTransition<TState, TTrigger>>
     {
         public TState stateFrom { get; protected set; }
