@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Paps.StateMachines
 {
-    public interface IHSMState<TState, TTrigger> : IFSM<TState, TTrigger>, IFSMState<TState, TTrigger>
+    public interface IHSMState<TState, TTrigger> : IFSM, IFSMState<TState, TTrigger>
     {
         IHSMState<TState, TTrigger> ActiveParent { get; }
-        new IHSMState<TState, TTrigger> CurrentState { get; }
-        new IHSMState<TState, TTrigger> InitialState { get; }
+        IHSMState<TState, TTrigger> CurrentChild { get; }
+        IHSMState<TState, TTrigger> InitialState { get; }
 
         IHSMState<TState, TTrigger> GetRoot();
         IHSMState<TState, TTrigger> GetLeaf();

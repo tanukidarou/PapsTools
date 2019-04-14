@@ -78,17 +78,25 @@ namespace Paps.StateMachines
             return t1.Equals(t2);
         }
 
-        public virtual void AddState(IFSMState<TState, TTrigger> state)
+        public virtual bool AddState(IFSMState<TState, TTrigger> state)
         {
             if(ContainsState(state.InnerState) == false)
             {
                 states.Add(state);
+                return true;
             }
+
+            return false;
         }
 
         public void Start()
         {
-            if(Started == false)
+            if (InitialState == null)
+            {
+                throw new InvalidOperationException("No initial state was specified to the current state machine");
+            }
+
+            if (Started == false)
             {
                 CurrentState = InitialState;
 
@@ -345,14 +353,20 @@ namespace Paps.StateMachines
 
         public void SetInitialState(IFSMState<TState, TTrigger> state)
         {
-            AddState(state);
-
-            InternalSetInitialState(state);
+            if(AddState(state))
+            {
+                InternalSetInitialState(state);
+            }
         }
 
         public void SetInitialState(TState state)
         {
-            InternalSetInitialState(GetStateByInnerState<IFSMState<TState, TTrigger>>(state));
+            var wantedState = GetStateByInnerState<IFSMState<TState, TTrigger>>(state);
+
+            if(wantedState != null)
+            {
+                InternalSetInitialState(wantedState);
+            }
         }
 
         private void InternalSetInitialState(IFSMState<TState, TTrigger> state)
@@ -454,6 +468,293 @@ namespace Paps.StateMachines
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+    }
+
+
+    public class FSM<TState> : IFSM<TState>, IEnumerable<IFSMState<TState>>
+    {
+        private List<IFSMState<TState>> states;
+
+        public IFSMState<TState> CurrentState { get; protected set; }
+        public IFSMState<TState> InitialState { get; protected set; }
+
+        public int StateCount
+        {
+            get
+            {
+                return states.Count;
+            }
+        }
+
+        public bool Active { get; set; }
+        public bool Started { get; private set; }
+
+        public event ChangedStateEvent<TState> onStateChanged;
+        public event ChangedStateEvent<TState> onBeforeSwitch;
+
+        protected Func<TState, TState, bool> stateComparator;
+
+        public FSM(Func<TState, TState, bool> stateComparator = null)
+        {
+            states = new List<IFSMState<TState>>();
+
+            if(stateComparator == null)
+            {
+                this.stateComparator = DefaultComparator<TState>;
+            }
+            else
+            {
+                this.stateComparator = stateComparator;
+            }
+        }
+
+        public void SetStateComparator(Func<TState, TState, bool> comparator)
+        {
+            if(comparator == null)
+            {
+                throw new ArgumentNullException();
+            }
+            else
+            {
+                stateComparator = comparator;
+            }
+        }
+
+        protected bool DefaultComparator<T>(T t1, T t2)
+        {
+            return t1.Equals(t2);
+        }
+
+        public bool AddState(IFSMState<TState> state)
+        {
+            if(ContainsState(state.InnerState) == false)
+            {
+                states.Add(state);
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool ContainsState(TState state)
+        {
+            for(int i = 0; i < states.Count; i++)
+            {
+                if(stateComparator(states[i].InnerState, state))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool ContainsState(IFSMState<TState> state)
+        {
+            return states.Contains(state);
+        }
+
+        public void ForeachState(Action<IFSMState<TState>> action)
+        {
+            for(int i = 0; i < states.Count; i++)
+            {
+                action(states[i]);
+            }
+        }
+
+        public void RemoveState(TState state)
+        {
+            if (CurrentState != null && stateComparator(CurrentState.InnerState, state))
+            {
+                throw new InvalidOperationException("Cannot remove current running state");
+            }
+            else
+            {
+                states.Remove(GetStateByInnerState(state));
+            }
+        }
+
+        public IFSMState<TState> GetStateByInnerState(TState state)
+        {
+            for(int i = 0; i < states.Count; i++)
+            {
+                var current = states[i];
+
+                if (stateComparator(current.InnerState, state))
+                {
+                    return current;
+                }
+            }
+
+            return null;
+        }
+
+        public T GetStateByInnerState<T>(TState state)
+        {
+            for (int i = 0; i < states.Count; i++)
+            {
+                var current = states[i];
+
+                if (stateComparator(current.InnerState, state) && current is T cast)
+                {
+                    return cast;
+                }
+            }
+
+            return default;
+        }
+
+        public T GetState<T>()
+        {
+            for(int i = 0; i < states.Count; i++)
+            {
+                if(states[i] is T cast)
+                {
+                    return cast;
+                }
+            }
+
+            return default;
+        }
+
+        public T[] GetStates<T>()
+        {
+            List<T> states = null;
+
+            for(int i = 0; i < states.Count; i++)
+            {
+                if(states[i] is T cast)
+                {
+                    if(states == null)
+                    {
+                        states = new List<T>();
+                    }
+
+                    states.Add(cast);
+                }
+            }
+
+            if(states != null)
+            {
+                return states.ToArray();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public void RemoveState(IFSMState<TState> state)
+        {
+            if (CurrentState != null && stateComparator(CurrentState.InnerState, state.InnerState))
+            {
+                throw new InvalidOperationException("Cannot remove current running state");
+            }
+            else
+            {
+                states.Remove(state);
+            }
+        }
+
+        public void ReplaceState(IFSMState<TState> newState)
+        {
+            var oldState = GetStateByInnerState(newState.InnerState);
+
+            if (oldState != null)
+            {
+                int index = states.IndexOf(oldState);
+
+                states[index] = newState;
+            }
+            else
+            {
+                throw new InvalidOperationException("no state with inner state " + newState.InnerState + " has been added to state machine");
+            }
+        }
+
+        public void SetInitialState(IFSMState<TState> state)
+        {
+            if(AddState(state))
+            {
+                InternalSetInitialState(state);
+            }
+        }
+
+        public void SetInitialState(TState state)
+        {
+            var wantedState = GetStateByInnerState(state);
+
+            if(wantedState != null)
+            {
+                InternalSetInitialState(wantedState);
+            }
+        }
+
+        private void InternalSetInitialState(IFSMState<TState> state)
+        {
+            InitialState = state;
+        }
+
+        public void SwitchState(TState state)
+        {
+            var newState = GetStateByInnerState(state);
+
+            if(newState != null)
+            {
+                IFSMState<TState> previous = CurrentState;
+
+                if (onBeforeSwitch != null)
+                {
+                    onBeforeSwitch(previous, newState);
+                }
+
+                CurrentState.Exit();
+
+                CurrentState = newState;
+
+                CurrentState.Enter();
+
+                if(onStateChanged != null)
+                {
+                    onStateChanged(previous, newState);
+                }
+            }
+        }
+
+        public void Update()
+        {
+            if(CurrentState != null && Active)
+            {
+                CurrentState.Update();
+            }
+        }
+
+        public void Start()
+        {
+            if(InitialState == null)
+            {
+                throw new InvalidOperationException("No initial state was specified to the current state machine");
+            }
+
+            if (Started == false)
+            {
+                CurrentState = InitialState;
+
+                CurrentState.Enter();
+
+                Started = true;
+            }
+        }
+
+        public IEnumerator<IFSMState<TState>> GetEnumerator()
+        {
+            return states.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

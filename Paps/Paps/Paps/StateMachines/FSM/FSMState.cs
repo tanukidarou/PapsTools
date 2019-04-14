@@ -2,8 +2,6 @@
 
 namespace Paps.StateMachines
 {
-    public delegate void ChangedStateEvent<TState, TTrigger>(IFSMState<TState, TTrigger> previous, TTrigger trigger, IFSMState<TState, TTrigger> current);
-    
     public abstract class FSMState<TState, TTrigger> : IFSMState<TState, TTrigger>
     {
         public string DebugName { get; set; }

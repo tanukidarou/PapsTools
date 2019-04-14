@@ -5,8 +5,33 @@ namespace Paps.StateMachines
 {
     public interface IFSM
     {
+        bool Started { get; }
         bool Active { get; }
         void Update();
+        void Start();
+    }
+
+    public interface IFSM<TState> : IFSM
+    {
+        IFSMState<TState> CurrentState { get; }
+        IFSMState<TState> InitialState { get; }
+
+        void SwitchState(TState state);
+
+        int StateCount { get; }
+
+        event ChangedStateEvent<TState> onStateChanged;
+        event ChangedStateEvent<TState> onBeforeSwitch;
+
+        bool AddState(IFSMState<TState> state);
+        void RemoveState(TState state);
+        void RemoveState(IFSMState<TState> state);
+        void SetInitialState(TState state);
+        bool ContainsState(TState state);
+        bool ContainsState(IFSMState<TState> state);
+        void ReplaceState(IFSMState<TState> state);
+
+        void ForeachState(Action<IFSMState<TState>> action);
     }
 
     public interface IFSM<TState, TTrigger> : IFSM
@@ -20,7 +45,7 @@ namespace Paps.StateMachines
         event ChangedStateEvent<TState, TTrigger> onStateChanged;
         event ChangedStateEvent<TState, TTrigger> onBeforeTransitionate;
 
-        void AddState(IFSMState<TState, TTrigger> state);
+        bool AddState(IFSMState<TState, TTrigger> state);
         void RemoveState(TState state);
         void RemoveState(IFSMState<TState, TTrigger> state);
         void SetInitialState(TState state);
