@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Paps.StateMachines
 {
-    public abstract class HSMState<TState, TTrigger> : IEnumerable<HSMState<TState, TTrigger>>
+    public abstract class HSMState<TState, TTrigger> :  IEnumerable<HSMState<TState, TTrigger>>
     {
         public delegate void StateChangeEvent(HSMState<TState, TTrigger> stateFrom, TTrigger trigger, HSMState<TState, TTrigger> stateTo);
         public delegate void HSMRefAction<TRefParameter>(HSMState<TState, TTrigger> state, ref TRefParameter parameter);

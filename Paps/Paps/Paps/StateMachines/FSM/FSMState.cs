@@ -52,5 +52,17 @@ namespace Paps.StateMachines
         {
             return false;
         }
+
+        public void ChangeInnerState(TState innerState)
+        {
+            if(StateMachine.ContainsState(this) && StateMachine.ContainsState(innerState))
+            {
+                throw new InvalidOperationException("State id could not be changed because state machine already has a state with such id");
+            }
+            else
+            {
+                InnerState = innerState;
+            }
+        }
     }
 }

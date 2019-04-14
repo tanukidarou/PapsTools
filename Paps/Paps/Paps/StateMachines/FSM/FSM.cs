@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Paps.StateMachines
 {
-    public class FSM<TState, TTrigger> : IFSM<TState, TTrigger>
+    public class FSM<TState, TTrigger> : IFSM<TState, TTrigger>, IEnumerable<IFSMState<TState, TTrigger>>
     {
         protected List<IFSMState<TState, TTrigger>> states;
         protected List<IFSMTransition<TState, TTrigger>> transitions;
@@ -17,6 +17,14 @@ namespace Paps.StateMachines
             }
         }
 
+        public int TransitionCount
+        {
+            get
+            {
+                return transitions.Count;
+            }
+        }
+
         public bool Active { get; set; } = true;
 
         public IFSMState<TState, TTrigger> CurrentState { get; protected set; }
@@ -24,6 +32,7 @@ namespace Paps.StateMachines
         public IFSMState<TState, TTrigger> InitialState { get; protected set; }
 
         public event ChangedStateEvent<TState, TTrigger> onStateChanged;
+        public event ChangedStateEvent<TState, TTrigger> onBeforeTransitionate;
 
         protected Func<TState, TState, bool> stateComparator;
         protected Func<TTrigger, TTrigger, bool> triggerComparator;
@@ -115,6 +124,11 @@ namespace Paps.StateMachines
             IFSMTransition<TState, TTrigger> transition = GetTransition(stateFrom, trigger);
 
             transitions.Remove(transition);
+        }
+
+        public void BreakAllTransitions()
+        {
+            transitions.Clear();
         }
 
         public IFSMTransition<TState, TTrigger> GetTransition(TState stateFrom, TTrigger trigger)
@@ -219,7 +233,7 @@ namespace Paps.StateMachines
             }
         }
 
-        public void BreakAllTransitionRelatedTo(TState state)
+        public void BreakAllTransitionsRelatedTo(TState state)
         {
             for (int i = 0; i < transitions.Count; i++)
             {
@@ -230,6 +244,22 @@ namespace Paps.StateMachines
                     transitions.RemoveAt(i);
                     i--;
                 }
+            }
+        }
+
+        public void ReplaceState(IFSMState<TState, TTrigger> newState)
+        {
+            var oldState = GetStateByInnerState<IFSMState<TState, TTrigger>>(newState.InnerState);
+
+            if (oldState != null)
+            {
+                int index = states.IndexOf(oldState);
+
+                states[index] = newState;
+            }
+            else
+            {
+                throw new InvalidOperationException("no state with inner state " + newState.InnerState + " has been added to state machine");
             }
         }
 
@@ -337,10 +367,16 @@ namespace Paps.StateMachines
             if(transition != null && ContainsState(transition.stateTo) && transition.IsValidTransition())
             {
                 IFSMState<TState, TTrigger> previous = CurrentState;
+                IFSMState<TState, TTrigger> next = GetStateByInnerState<IFSMState<TState, TTrigger>>(transition.stateTo);
+
+                if (onBeforeTransitionate != null)
+                {
+                    onBeforeTransitionate(previous, trigger, next);
+                }
 
                 previous.Exit();
 
-                CurrentState = GetStateByInnerState<IFSMState<TState, TTrigger>>(transition.stateTo);
+                CurrentState = next;
 
                 CurrentState.Enter();
 
@@ -387,6 +423,27 @@ namespace Paps.StateMachines
             {
                 states.Remove(state);
             }
+        }
+
+        public void ForeachState(Action<IFSMState<TState, TTrigger>> action)
+        {
+            for(int i = 0; i < states.Count; i++)
+            {
+                action(states[i]);
+            }
+        }
+
+        public void ForeachTransition(Action<IFSMTransition<TState, TTrigger>> action)
+        {
+            for (int i = 0; i < transitions.Count; i++)
+            {
+                action(transitions[i]);
+            }
+        }
+
+        public bool ContainsTransition(IFSMTransition<TState, TTrigger> transition)
+        {
+            return transitions.Contains(transition);
         }
 
         public IEnumerator<IFSMState<TState, TTrigger>> GetEnumerator()

@@ -41,6 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StateMachines\BFSM\IBFSMState.cs" />
+    <Compile Include="StateMachines\BFSM\IBFSMStateBehaviour.cs" />
+    <Compile Include="StateMachines\FSM\IFSMState.cs" />
+    <Compile Include="StateMachines\FSM\IFSMTransition.cs" />
+    <Compile Include="StateMachines\HSM\IHSMState.cs" />
     <Compile Include="Tasks\ActionTask.cs" />
     <Compile Include="StateMachines\BFSM\BFSM.cs" />
     <Compile Include="StateMachines\BFSM\BFSMStateBehaviour.cs" />

@@ -8,7 +8,7 @@ namespace Paps.StateMachines
 {
     public interface IFSMState<TState, TTrigger>
     {
-        string DebugName { get; }
+        string DebugName { get; set; }
 
         TState InnerState { get; }
         IFSM<TState, TTrigger> StateMachine { get; }
@@ -18,5 +18,7 @@ namespace Paps.StateMachines
         void Exit();
 
         bool HandleEvent(TTrigger trigger);
+
+        void ChangeInnerState(TState innerState);
     }
 }
