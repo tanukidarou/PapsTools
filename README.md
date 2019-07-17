@@ -1,10 +1,10 @@
 ###### v0.1
-#Duo Dinamita 🧨
+# Duo Dinamita 🧨
 
 
-##Estándar de código para desarrollo de videojuegos
+## Estándar de código para desarrollo de videojuegos
 
-###Indice
+### Indice
 1. [Objetivo]()
 2. [Control de versión del documento]()
 3. [Estándar de código](#3-estándar-de-código)
@@ -48,11 +48,11 @@ Definir un estandar nos facilita una comprecion y define clamaramnte las intenic
 
 ## 2. Control de version del documento
 Ver|Editor|Descripción de las modificaciones|Fecha
-:---|:---|:---|:---|:---
+:---|:---|:---|:---
 0.1|Darío Ciarlantini|alfa|29/01/2018
 
 
-## 3. Estandar de Código
+## 3. Estándar de Código
 
 ### 3.1 Indentación
 
