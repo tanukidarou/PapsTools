@@ -38,7 +38,7 @@
 6. [Manejo de Assets]()
 	1. [Estándar de Nombres]()
 	2. [Tamaños y requerimientos]()
-7. [Sitios Útiles]()
+7. [Sitios Útiles](#7-sitios-útiles)
 
 
 
@@ -185,3 +185,6 @@ El código de versión tiene que mostrarse en pantalla,. Esta no siempre tiene q
 
 ## 7. Sitios Útiles
 (rev)
+
+### [Microsoft Referencesource](https://referencesource.microsoft.com)
+Sitio de referencia de Microsoft.
