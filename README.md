@@ -1,8 +1,7 @@
 ###### v0.1
 # Duo Dinamita 🧨
 
-
-## Estándar de código para desarrollo de videojuegos
+### Estándar de código para desarrollo de videojuegos
 
 ### Indice
 1. [Objetivo]()
@@ -88,7 +87,8 @@ No se debe utilizar espacios luego de abrir un paréntesis o cerrarlo.
 #### 3.5.1 Variables, Clases y Métodos
 (rev)
 
-#### 3.5.2 Genéricos (rev)
+#### 3.5.2 Genéricos
+(rev)
 
 Forma de nombrarlo:
 El nombre de la clase o método tiene que ser auto explicable.
@@ -160,14 +160,20 @@ En el caso de temer una dependencia a una DLLo una implementación temporal o de
 
 El código de versión a Mostar debera contaner los siguientes componentes en el orden pactado separador por puntos:
 
-Número de versión principal: Esta dependerá de las factoizaciones generales del programa. Principalmente definirá si un proyecto se encuentra en BETA con un “0” (cero) asignado o un “1” (uno) si el proyecto se encuentra con todas sus características.
-Número de implementación o cambio: Muestra el número progresivo de las modificaciones planteadas al juego. Por cada modificación que luego vaya a ser testeada se recomienda el cambio de número. En el caso de realizar una build en un estado de prueba, tiene que estar acompañada de “b” informando el estado beta de la implementación.
-Cinco números generados por la GUID: Estos números generados automáticamente determina si una build realizada es idéntica a otra realizada.
+1. Número de versión principal: Esta dependerá de las factoizaciones generales del programa. Principalmente definirá si un proyecto se encuentra en BETA con un “0” (cero) asignado o un “1” (uno) si el proyecto se encuentra con todas sus características.
 
-Ejemplos:
-0.10.aaaaa
-1.5b.bbbbb
-1.40.ccccc
+2. Número de implementación o cambio: Muestra el número progresivo de las modificaciones planteadas al juego. Por cada modificación que luego vaya a ser testeada se recomienda el cambio de número. En el caso de realizar una build en un estado de prueba, tiene que estar acompañada de “b” informando el estado beta de la implementación.
+
+3. Cinco números generados por la GUID: Estos números generados automáticamente determina si una build realizada es idéntica a otra realizada.
+
+
+Ejemplo|Descripción
+:------|:--------
+0.10.rn0by|Versión de Beta de la aplicación.
+1.5b.cyB1b|Versión en producción con una prueba de una nueva implementación.
+1.40.hIHBh|Versión en producción.
+
+
 
 El código de versión tiene que mostrarse en pantalla,. Esta no siempre tiene que ser visible por el usuario, pero tiene que poder ser localizada fácilmente por el equipo de desarrollo.
 
@@ -186,5 +192,4 @@ El código de versión tiene que mostrarse en pantalla,. Esta no siempre tiene q
 ## 7. Sitios Útiles
 (rev)
 
-### [Microsoft Referencesource](https://referencesource.microsoft.com)
-Sitio de referencia de Microsoft.
+[Microsoft Referencesource](https://referencesource.microsoft.com): Sitio de referencia de Microsoft.
