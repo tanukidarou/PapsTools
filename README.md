@@ -194,6 +194,13 @@ En el caso de temer una dependencia a una DLLo una implementación temporal o de
 
 ### 5.1 Almacenamientos de proyectos
 (rev)
+El repositorio debe incluir:
+* Solución
+* README explicando uso basico de la solución.
+* Diagramas UML (Editable + PDF).
+* Manual de Uso (Instructivo).
+* Instalación / Requerimentos.
+* Notas de Uso.
 
 
 ### 5.2 Repositorio
