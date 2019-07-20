@@ -88,7 +88,7 @@ En el caso de los corchetes, este debe abrir siempre debajo de la linea de decla
 Los corchetes en la declaraciones siempre deben aparecer para mejorar la claridad del bloque.
 
 - Correcto
-```C#
+```JAVA
 for (int i = 0; i < 10; i++)
 {
 	for (int j = 0; j < 10; j++)
@@ -100,7 +100,7 @@ for (int i = 0; i < 10; i++)
 
 
 - Incorrecto
-```C#
+```JAVA
 for (int i = 0; i < 10; i++) {
 	for (int j = 0; j < 10; j++) {
 		System.debug(i + j);
@@ -109,7 +109,7 @@ for (int i = 0; i < 10; i++) {
 ```
 
 - Incorrecto
-```C#
+```JAVA
 for (int i = 0; i < 10; i++)
 	for (int j = 0; j < 10; j++)
 		System.debug(i + j);
@@ -240,6 +240,7 @@ El código de versión tiene que mostrarse en pantalla,. Esta no siempre tiene q
 
 
 ### 5.4 Documentación
+(rev)
 
 ## 6. Manejo de Assets
 
