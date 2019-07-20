@@ -197,7 +197,17 @@ En el caso de temer una dependencia a una DLLo una implementación temporal o de
 
 
 ### 5.2 Repositorio
-(rev)
+Para repositorios Git el proceos de versionado y guardado de proyecto se divide en tres brachs principales.
+
+**Mastes:** Siempre debe conservar la última versión estable del software. Etiquetado con su correspondiente código de versión.
+
+**Develop:** Branch donde se van a centrar los cambios entre uan versión a otra de la solución. Debe encontrarse en un estado donde se pueda utlilizar el software aunque no se encuentre testeado.
+
+**Brach_de_nueva_caracteristica:** Este branch tiene que contener todos los cambios apliacdos para la nueva caracteristica. El nombre de este tiene que ser igual a la implementación buscada. 
+
+Una vez terminada la nueva implemebtación esta se tiene que mergiar a Develop como un nuevo commit, asi se distingue la ubicación de esta en el gráfico del Git.
+
+Al terminar todas las implementación, factorización y testing. Debe mergearse en Master para entrar en producción. 
 
 
 ### 5.3 Versionado
