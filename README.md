@@ -57,19 +57,63 @@ Ver|Editor|Descripción de las modificaciones|Fecha
 
 Todo el código debe estar correctamente indentado. Los tabs deben ser usados como unidad de indentación y deben estar configurados en nuestros editores como 4 espacios. A su vez todo comentario debe estar indentado en línea con los bloques de código a los que se refiere.
 
-Esto nos permite identificar rápidamente bloques de código.
+Esto nos permitira identificar rápidamente bloques de código.
 
 
 ### 3.2 Espacios
 
-Se recomienda utilizar un espacio para separar todos los operadores (excepto los de incremento/decrecimiento ej: i++; i--;), variables, literales, palabras claves, comas y punto y coma.
+Se recomienda utilizar un espacio para separar todos los operadores (excepto los de incremento/decrecimiento ej: i++ / i--), variables, literales, palabras claves, comas y punto y coma.
 
 No se debe utilizar espacios luego de abrir un paréntesis o cerrarlo.
 
-(agregar ejemplo)
+- Correcto
+```C#
+for (int i = 0; i < 10; i++) {
+	System.debug(i);
+}
+```
+
+- Incorrecto
+```C#
+for(int i=0;i<10;i++){
+	System.debug( i );
+}
+```
 
 ### 3.3 Llaves y corchetes
-(rev)
+La apertura y cierre de llave para una declaración tiene que permanecer en la misma linea. Solo en determinados casos donde la declaración se vuelva demaciado grande para el tamaño de la linea, este debera pasar a la siguiente. 
+
+En el caso de los corchetes, este debe abrir siempre debajo de la linea de declaración y deber quedar solo el corchete. En el caso de cierre, despues despues del bloque de código, este cierra un espacio por debajo de la última linea y tiene que estar solo.
+
+Los corchetes en la declaraciones siempre deben aparecer para mejorar la claridad del bloque.
+
+- Correcto
+```C#
+for (int i = 0; i < 10; i++)
+{
+	for (int j = 0; j < 10; j++)
+	{
+		System.debug(i + j);
+	}
+}
+```
+
+
+- Incorrecto
+```C#
+for (int i = 0; i < 10; i++) {
+	for (int j = 0; j < 10; j++) {
+		System.debug(i + j);
+	}
+}
+```
+
+- Incorrecto
+```C#
+for (int i = 0; i < 10; i++)
+	for (int j = 0; j < 10; j++)
+		System.debug(i + j);
+```
 
 ### 3.4 Largo y salto de linea
 (rev)
